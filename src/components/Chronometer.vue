@@ -6,15 +6,16 @@
     }>()
     
     const emits = defineEmits(['timeUp'])
-    const totalTime = props.countdownTime;  // minutes
-    const remainingTime = ref(totalTime); // seconds
+    const countdownMinutes = props.countdownTime;  // minutes
+    const totalTimeInSeconds = ref(countdownMinutes * 60); // convert minutes to seconds
+    const remainingTime = ref(totalTimeInSeconds.value); // seconds
     
     let timer: ReturnType<typeof setTimeout> | null = null;
   
     const formattedTime = computed(() => {
-        const hours = Math.floor(remainingTime.value / 3600);
-        const minutes = Math.floor((remainingTime.value % 3600) / 60);
-        const seconds = remainingTime.value % 60;
+        const hours = Math.floor(remainingTime.value / 3600); // Calculate hours
+        const minutes = Math.floor((remainingTime.value % 3600) / 60); // Calculate minutes
+        const seconds = remainingTime.value % 60; // Calculate seconds
         return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
     });
 
@@ -24,12 +25,12 @@
 
     function startCountdown() {
         timer = setInterval(() => {
-        if (remainingTime.value > 0) {
-            remainingTime.value--;
-        } else {
-            clearInterval(timer!);
-            emits('timeUp')
-        }
+            if (remainingTime.value > 0) {
+                remainingTime.value--;
+            } else {
+                clearInterval(timer!);
+                emits('timeUp');
+            }
         }, 1000);
     }
 
@@ -40,10 +41,8 @@
     onBeforeUnmount(() => {
         clearInterval(timer!);
     });
-    
 </script>
-  
-  
+
 <template>
     <div class="flex flex-col items-center justify-center">
         <div class="text-9xl">
@@ -51,4 +50,3 @@
         </div>        
     </div>
 </template>
-  
